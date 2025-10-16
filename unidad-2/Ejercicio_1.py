@@ -102,7 +102,7 @@ def compara_fechas(fecha: list, dia_hoy: int):
         Boolean == False: Si la fecha es posterior a la fecha de "hoy".
     """
     #Regresa Falso si el mes o el día y mes no son compatibles (fecha que supera "hoy"), si es correcta se regresa True
-    return False if fecha[1] > 10 or (dia_hoy < fecha[0] and 10 == fecha[1]) else True
+    return False if (fecha[2]==2025 and fecha[1] > 10) or (dia_hoy < fecha[0] and 10 == fecha[1] and fecha[2] == 2025) else True
 
 #Función para calcular la edad según la fecha y si cumple años
 def calcular_edad(fecha: list, dia_hoy: int):
