@@ -1,5 +1,15 @@
 #Funcion de validación de cadena vacía y/o espacios vacíos
 def no_vacio(cadena: str):
+    """
+    Función que toma una cadena de texto y valida si se halla vacía o sólo contiene espacios (" ").
+
+    Parameters:
+        cadena (String): La cadena de texto a evaluar.
+    
+    Returns:
+        Boolean == True: Si cadena no es vacía o sólo espacios.
+        Boolean == False: Si cadena está vacía o sólo contiene espacios.
+    """
     #Se valida que la cadena esté vacía 
     if cadena == "":
         return False
@@ -9,6 +19,16 @@ def no_vacio(cadena: str):
     
 #Función de validación de numero entero
 def es_numero(num: str):
+    """
+    Función que toma una cadena de texto y valida si se trata de un entero positivo.
+
+    Parameters:
+        num (String): La cadena de texto a evaluar.
+    
+    Returns:
+        Boolean == True: Si num es un entero positivo.
+        Boolean == False: Si num no es un entero positivo.
+    """
     #Se valida cadena vacía
     if no_vacio(num):
         return False
@@ -26,6 +46,16 @@ def es_numero(num: str):
 
 #Función de validación de numero flotante
 def es_flotante(num: str):
+    """
+    Función que toma una cadena de texto y valida si se trata de un número flotante positivo.
+
+    Parameters:
+        num (String): La cadena de texto a evaluar.
+    
+    Returns:
+        Boolean == True: Si num es un número flotante positivo.
+        Boolean == False: Si num no es un número flotante positivo.
+    """
     #Se valida cadena vacía
     if no_vacio(num):
         return False
@@ -52,6 +82,17 @@ def es_flotante(num: str):
 
 #Función de manejo de mensajes y captura de datos
 def entrada_validada(mensaje: str, validacion, error: str):
+    """
+    Función que muestra un mensaje de entrada, computa una entrada y verifica un criterio de validación sobre ella. Si la cadena es validada la retorna o muestra un mensaje de error hasta validarla.
+
+    Parameters:
+        mensaje (String): La cadena de texto mostrada como mensaje para la entrada de datos.
+        validacion (Function): La función de validación de criterio.
+        error (String): La cadena de texto que se muestra cada que el criterio no se cumple sobre la entrada de texto.
+    
+    Returns:
+        valor (String): Una cadena de texto válida patra el criterio de validación.
+    """
     #Ciclo equivalente a do..while
     while True:
         #Se muestra un mensaje
@@ -67,6 +108,15 @@ def entrada_validada(mensaje: str, validacion, error: str):
 
 #Sistema integrado (main)
 def sistema_historial():
+    """
+   Función que inicializa el sistema (Función de arranque o composición).
+
+    Parameters:
+        (None): No recibe ningun parámetro
+    
+    Returns:
+        (None): No devuelve ningun valor
+    """
     #Se crea una lista vacía de datos
     data = []
     #Se generan entradas de datos validadas para la candidad de alumnos con sus mensajes de entrada y error, asi como funciones de evaluación
