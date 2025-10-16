@@ -1,10 +1,32 @@
 #Función de validación de carácter numérico
 def es_numero(num: str):
+    """
+    Función que toma un caracter y valida si se trata de un dígito o no.
+
+    Parameters:
+        num (String): Un caracter.
+    
+    Returns:
+        Boolean == True: Si num es dígito.
+        Boolean == False: Si num NO es dígito.
+    """
     #Se regresa True si el caracter es numérico, False si no
     return True if num in "0123456789" else False
 
 #Funcion de validación de fecha realista
 def fecha_real(dia: int, mes: int, anio: int):
+    """
+    Función que valida si una fecha (d, m, a) coincide con una fecha real entre 1901 y 2025. No se validan biciestos.
+
+    Parameters:
+        dia (Integer): El día del mes.
+        mes (Integer): El mes del año.
+        anio (Integer): El año.
+    
+    Returns:
+        Boolean == True: Si la fecha es realista y acotada entre 1901 y 2025
+        Boolean == False: Si la fecha no es realista para el calendario.
+    """
     #Se genera un diccionario de días máximos válidos
     meses = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 31, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     #Se invalida la fecha cada que los días no coincidan con sus meses o el año sea anterior a 1901 o mayor a 2025 [No se validad biciestos]
@@ -12,6 +34,16 @@ def fecha_real(dia: int, mes: int, anio: int):
 
 #Función de validación de formato de entrada 
 def validar_entrada(entrada: str):
+    """
+    Función que valida si una cadena dada por teclado coincide con el formato DD-MM-AAAA y es una fecha realista.
+
+    Parameters:
+        entrada (String): La cadena de texto a validarse.
+    
+    Returns:
+        (List<Integer>): Una lista de enteros con los datos contenidos en el formato DD-MM-AAAA, como [d, m, a].
+        Boolean == False: Si la cadena no cumple el criterio de formato y no es una fecha realista.
+    """
     #Si la entrada inicia o termina en guión se regresa False
     if entrada == "" or entrada[0] == "-" or entrada[-1] == "-":
         return False
@@ -58,11 +90,32 @@ def validar_entrada(entrada: str):
 
 #Función para validar que la fecha no supere la fecha actual
 def compara_fechas(fecha: list, dia_hoy: int):
+    """
+    Función que valida si una fecha en formato de lista [d, m, a] no supera el día actual de Octubre 2025.
+
+    Parameters:
+        fecha (List<Integer>): La fecha en lista de enteros en formato [d, m, a].
+        dia_hoy (Integer): El día de octubre 2025 para el cual se evalúa la fecha.
+    
+    Returns:
+        Boolean == True: Si la fecha es anterior a la fecha de "hoy".
+        Boolean == False: Si la fecha es posterior a la fecha de "hoy".
+    """
     #Regresa Falso si el mes o el día y mes no son compatibles (fecha que supera "hoy"), si es correcta se regresa True
     return False if fecha[1] > 10 or (dia_hoy < fecha[0] and 10 == fecha[1]) else True
 
 #Función para calcular la edad según la fecha y si cumple años
 def calcular_edad(fecha: list, dia_hoy: int):
+    """
+    Función que calcula la edad del usuario y la muestra en pantalla dada una fecha y el día actual de Octubre 2025. Se valida cumpleaños y excepción de nacimiento.
+
+    Parameters:
+        fecha (List<Integer>): La fecha en lista de enteros en formato [d, m, a].
+        dia_hoy (Integer): El día de octubre 2025 con respecto al que se calcula la edad.
+    
+    Returns:
+        (String): Un mensaje con la edad y si cumple años o si nace ese día.
+    """
     #Si el mes y día coinciden, se marca una bandera de cumpleaños
     if (fecha[1] == 10) and (fecha[0] == dia_hoy):
         cumple = True
@@ -73,6 +126,15 @@ def calcular_edad(fecha: list, dia_hoy: int):
 
 #Función principal del sistema
 def sistema_fecha(dia: int):
+    """
+    Función inicializa el sistema (Función de arranque o composición).
+
+    Parameters:
+        dia_hoy (Integer): El día de octubre 2025 para el cual se verifica el proceso.
+    
+    Returns:
+        (None): No retorna
+    """
     #Se define una entrada vacía
     entrada = ""
     #Se define una lista para la fecha vacía
