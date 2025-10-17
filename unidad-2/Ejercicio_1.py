@@ -122,7 +122,7 @@ def calcular_edad(fecha: list, dia_hoy: int):
     else:
         cumple = False
     #Se muestra mensaje de edad con la edad y si cumple años (o si nació hoy)
-    return "\nSu edad es: " + str(2025 - fecha[2]) + cumple*" ¡Feliz cumpleaños!" + (not bool(2025 - fecha[2]))*" NACISTE HOY Xd"
+    return "\nSu edad es: " + str(2025 - fecha[2]) + cumple*" ¡Feliz cumpleaños!" + (not bool(2025 - fecha[2]) and cumple)*" NACISTE HOY Xd"
 
 #Función principal del sistema
 def sistema_fecha(dia: int):
