@@ -15,7 +15,7 @@ def no_vacio(cadena: str):
         return False
     else:
         #Se valida que no sean espacios en blanco
-        return False if set(cadena) == set(" ") else True
+        return False if (set(cadena) == set(" ")) else True
     
 #Función de validación de numero entero
 def es_numero(num: str):
@@ -30,7 +30,7 @@ def es_numero(num: str):
         Boolean == False: Si num no es un entero positivo.
     """
     #Se valida cadena vacía
-    if no_vacio(num):
+    if not no_vacio(num):
         return False
     #Ciclo para verificar que el número no contenga caracteres no numericos
     for x in num:
@@ -57,7 +57,7 @@ def es_flotante(num: str):
         Boolean == False: Si num no es un número flotante positivo.
     """
     #Se valida cadena vacía
-    if no_vacio(num):
+    if not no_vacio(num):
         return False
     #Se agrega bandera de validación de caracter numérico
     bandera = False
