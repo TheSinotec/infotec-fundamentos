@@ -129,14 +129,22 @@ def sistema_historial():
         registro = {}
         #Se crea una lista para las materias
         tira = []
+        #Se genera un valor para acumular la suma de calificaciónes que dará paso al promedio
+        registro["promedio"] = 0.0
         #Se genera una entrada de datos validada para el nombre
         registro["nombre"] = entrada_validada(f"Nombre del alumno #{i + 1}: ", no_vacio, "No puede estar vacío el nombre")
         #Se genera una entrada de datos validada para la matricula
         registro["matricula"] = entrada_validada(f"Matricula del alumno {registro["nombre"]}: ", no_vacio, "No puede estar vacía su matrícula")
         #Ciclo para generar el registro de materias
         for j in range(materias):
-            #Se agrega mediante entrada de datos validada la aprobación o no de la materia según una entrada flotante
-            tira.append("Reprobada" if float(entrada_validada(f"Calificación de la materia #{j + 1} del alumno {registro["nombre"]}: ", es_flotante, "Debe ser un número positivo entre 0 y 10.")) <= 6.0 else "Aprobada")
+            #Se agrega mediante entrada de datos validada la calificación flotante de la materia 
+            calificacion = float(entrada_validada(f"Calificación de la materia #{j + 1} del alumno {registro["nombre"]}: ", es_flotante, "Debe ser un número positivo entre 0 y 10."))
+            #Se suma a las calificaciones anteriores
+            registro["promedio"] += calificacion
+            #Se agrega como aprobada o reprobada para el historial
+            tira.append("Reprobada" if calificacion <= 6.0 else "Aprobada")
+        #Se calcula el promedio
+        registro["promedio"] /= materias
         #Se agrega al registro la tira de materias
         registro["materias"] = tira
         #Se agrega el diccionario de registro a la lista de datos
@@ -153,6 +161,8 @@ def sistema_historial():
             print(f"Materia #{indice}: {y}")
             #Se incrementa el índice
             indice += 1
+        #Se muestra mensaje de aprobación y promedio
+        print(f"\nPROMEDIO: {x["promedio"]} [ALUMNO {"REPROBADO" if x["promedio"] <= 6.0 else "APROBADO"}]")
 
 #Se inicializa el programa mediante la función principal
 sistema_historial()
