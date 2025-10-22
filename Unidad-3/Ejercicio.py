@@ -2,14 +2,17 @@
 
 import pandas as pd
 
-def importar_archivo(ruta, metodo, extencion):
-    return metodo(ruta + extencion)
+def extraer_extensión(ruta: str):
+    partes = ruta.split(".")
+    return partes[2] if (len(partes) == 3 and partes[2] in ["xlsx", "xml", "csv"]) else False
 
-# 1. Carga los archivos
-#df_estudiantes = pd.read_csv("./respuestas_estudiantes.csv")
-#df_correctas = pd.read_excel("./respuestas_correctas.xlsx")
-#df_correctas.to_xml("./correctas.xml", index=False, parser="etree")
-#print(df_correctas)
+def manejar_archivo(ruta: str, metodo, export: bool = False):
+    extension = extraer_extensión(ruta)
+    return False if not bool(extension) else (
+        metodo(ruta) if not export else (
+            metodo(ruta, index = False, parser = "etree") if extension == "xml" else metodo(ruta, index = False)
+        )
+    )
 
 def calificar_examenes(df_correctas, df_estudiantes):
     # 2. Obtener loas preguntas usando métodos
@@ -52,7 +55,15 @@ def calificar_examenes(df_correctas, df_estudiantes):
     print("\n=== RESULTADOS DE LOS ESTUDIANTES ===")
     print(df_estudiantes[["Nombre", "Puntuación"]].sort_values("Puntuación", ascending = False).to_string(index = False))
 
-def exportar_documento(df_estudiantes):
-    # 7. Guarda resultados
-    df_estudiantes.to_csv("resultados_examen.csv", index = False)
-    print("\nResultados guardadps en 'resultados_examen.csv")
+
+
+# 1. Carga los archivos
+#df_estudiantes = pd.read_csv("./respuestas_estudiantes.csv")
+#df_correctas = pd.read_excel("./respuestas_correctas.xlsx")
+#df_correctas.to_xml("./correctas.xml", index=False, parser="etree")
+#df_correctas = manejar_archivo("./respuestas_correctas.xlsx", pd.read_excel)
+#print(df_correctas)
+#print(manejar_archivo("./respuesta22.xlsx", df_correctas.to_excel, True))
+
+
+print("\nBienvenido! Para comenzar ingrese la ruta del archivo que desea usar para la evaluación:\n")
