@@ -2,12 +2,12 @@
 
 import pandas as pd
 
-def extraer_extensión(ruta: str):
+def extraer_extension(ruta: str):
     partes = ruta.split(".")
     return partes[2] if (len(partes) == 3 and partes[2] in ["xlsx", "xml", "csv"]) else False
 
 def manejar_archivo(ruta: str, metodo, export: bool = False):
-    extension = extraer_extensión(ruta)
+    extension = extraer_extension(ruta)
     return False if not bool(extension) else (
         metodo(ruta) if not export else (
             metodo(ruta, index = False, parser = "etree") if extension == "xml" else metodo(ruta, index = False)
@@ -66,4 +66,38 @@ def calificar_examenes(df_correctas, df_estudiantes):
 #print(manejar_archivo("./respuesta22.xlsx", df_correctas.to_excel, True))
 
 
-print("\nBienvenido! Para comenzar ingrese la ruta del archivo que desea usar para la evaluación:\n")
+print("\nPara comenzar ingrese la ruta del archivo que desea usar para la evaluación (el nombre del archivo debe contener la extención):\n")
+#IMPUT
+entrada = "./respuestas_correctas.xlsx"
+match(extraer_extension(entrada)):
+    case "xlsx":
+        df_correctas = manejar_archivo(entrada, pd.read_excel)
+    case "xml":
+        df_correctas = manejar_archivo(entrada, pd.read_xml)
+    case "csv":
+        df_correctas = manejar_archivo(entrada, pd.read_csv)
+    case default:
+        print("\nFormato de ruta incompleto (la ruta debe comenzar con la raíz './' seguido de las carpetas que contienen el archivo asi"\
+              " como el nombre del archivo '.' extensión). \nSe admiten archivos csv, xlsx y xml. Intentelo nuevamente.\n\n")
+        
+#CALIFICA
+#OUTPUT
+while (entrada not in ["xlsx", "csv", "xml", "n"]):
+    print("\n¿Desea exportar los datos? Teclee: \n[XLSX]: Exportar en formato xlsx\n[CSV]: Exportar en formato csv\n"\
+          "[XML]: Exportar en formato xml\n [N]: Salir sin exportar\n\n")
+    entrada = "csv"
+if entrada != "n":
+    while ("\\" in entrada or "." in entrada):
+        print("\nIngrese el nombre de su archivo")
+        entrada = "./respuestas_correctas.xlsx"
+match(entrada):
+    case "xlsx":
+        manejar_archivo(entrada, df_correctas.to_excel, True)
+    case "xml":
+        manejar_archivo(entrada, df_correctas.to_xml, True)
+    case "csv":
+        manejar_archivo(entrada, df_correctas.to_csv, True)
+    case "no":
+        print("No se ha guardado ningún archivo")
+    case default:
+        print(f"\n[{entrada}] NO se considera como un formato válido. \nSe admiten archivos csv, xlsx y xml. Intentelo nuevamente.\n\n")
