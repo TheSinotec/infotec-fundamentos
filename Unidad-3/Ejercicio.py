@@ -14,7 +14,7 @@ def extraer_extension(ruta: str):
         (Boolean == False): Si no cumple la validacion de la ruta
     
     Exceptions:
-        (FileNotFoundError): Archivo no existe.
+        (FileNotFoundError): Archivo y/o ruta no existe.
     """
     #Se segmenta la entrada segun puntos
     partes = ruta.split(".")
@@ -23,30 +23,54 @@ def extraer_extension(ruta: str):
 
 def manejar_archivo(ruta: str, metodo, export: bool = False):
     """
-    Funcion que recibe una ruta de archivo, un metodo y una bandera. Aplica el método si la extensión 
+    Funcion que recibe una ruta de archivo, un metodo y una bandera. Se emplea el metodo en modo importar archivo (export == False) 
+    o exportar archivo (export == True), aplicando su metodo correspondiente.
 
     Parameters:
         ruta (String): Representa una ruta de un archivo de formato ["./<ruta>/<archivo>.<extension>].
+        metodo (Function): Representa un metodo que se aplica segun el modo y ruta de extension.
+        export (Boolean): Representa una bandera de exportacion, si (export == False) la funcion esta en modo importar; 
+            si (export == True) la funcion esta en modo exportar archivo
     
     Returns:
-        (String): La extension del archivo contenido en la ruta [<extension>].
-        (Boolean == False): Si no cumple la validacion de la ruta
+        (Any): La respuesta del metodo llamado segun lso casos validados.
+        (Boolean == False): Si no cumple la validacion de la ruta y extension.
     
     Exceptions:
-        (FileNotFoundError): Archivo no existe.
+        (FileNotFoundError): Archivo y/o ruta no existe.
     """
     #Se extre la extension de la ruta
     extension = extraer_extension(ruta)
     #Se entrega falso si la extension no es valida o la ruta
-    return False if not bool(extension) else (
-        #Si la exportacion no esta activa se ejecuta el metodo sobre la ruta
-        metodo(ruta) if not export else (
-            #Si está activo el modo de exportacion se valida si es xml y se pasan parametros de libreria
-            metodo(ruta, index = False, parser = "etree") if extension == "xml" else metodo(ruta, index = False)
-        )
-    )
+    if not bool(extension):
+        return False
+    else:
+        #Si está activo el modo de exportacion se valida si es xml y se pasan parametros de libreria
+        if extension == "xml":
+            #Si la exportacion esta activa se ejecuta el metodo sobre la ruta para xml
+            return metodo(ruta, parser = "etree") if not export else metodo(ruta, index = False, parser = "etree")
+        else:
+            #Si la exportacion no esta activa se ejecuta el metodo sobre la ruta
+            return metodo(ruta) if not export else metodo(ruta, index = False,)
 
 def calificar_examenes(df_correctas, df_estudiantes):
+    """
+    Funcion que recibe dos objetos de tipo DataFrame que emplea para generar una evaluacion, se genera un resumen y visualizacion 
+    en la pantalla, ademas de entregar el df_estudiantes extendido con las calificaciones resultado de la evaluacion.
+
+    Parameters:
+        ruta (String): Representa una ruta de un archivo de formato ["./<ruta>/<archivo>.<extension>].
+        metodo (Function): Representa un metodo que se aplica segun el modo y ruta de extension.
+        export (Boolean): Representa una bandera de exportacion, si (export == False) la funcion esta en modo importar; 
+            si (export == True) la funcion esta en modo exportar archivo
+    
+    Returns:
+        (Any): La respuesta del metodo llamado segun lso casos validados.
+        (Boolean == False): Si no cumple la validacion de la ruta y extension.
+    
+    Exceptions:
+        (FileNotFoundError): Archivo y/o ruta no existe.
+    """
     #Obtenemos las preguntas usando metodos
     preguntas = df_correctas["Pregunta"].values
     #Inicializamos diccionario de respuestas correctas
