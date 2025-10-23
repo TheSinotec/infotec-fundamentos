@@ -3,101 +3,112 @@
 import pandas as pd
 
 def extraer_extension(ruta: str):
+    #Se segmenta la entrada segun puntos
     partes = ruta.split(".")
+    #Se regresa la extension si la ruta tiene el formato de ruta y si es uno de los formatos permitidos, False si no
     return partes[2] if (len(partes) == 3 and partes[2] in ["xlsx", "xml", "csv"]) else False
 
 def manejar_archivo(ruta: str, metodo, export: bool = False):
+    #Se extre la extension de la ruta
     extension = extraer_extension(ruta)
+    #Se entrega falso si la extension no es valida o la ruta
     return False if not bool(extension) else (
+        #Si la exportacion no esta activa se ejecuta el metodo sobre la ruta
         metodo(ruta) if not export else (
+            #Si está activo el modo de exportacion se valida si es xml y se pasan parametros de libreria
             metodo(ruta, index = False, parser = "etree") if extension == "xml" else metodo(ruta, index = False)
         )
     )
 
 def calificar_examenes(df_correctas, df_estudiantes):
-    # 2. Obtener loas preguntas usando métodos
+    #Obtenemos las preguntas usando metodos
     preguntas = df_correctas["Pregunta"].values
-
-    # 3. Crear diccionario de respuestas correctas
-    clave_respuestas = {} # Paso 1: Creamos un diccionario vacío
-    for i in range(df_correctas.shape[0]): # Paso 2: Recorremos cada fila
-        # Paso 3: Extraemos pregunta y respuesta
+    #Inicializamos diccionario de respuestas correctas
+    clave_respuestas = {}
+    #Ciclo para recorrer las columnas
+    for i in range(df_correctas.shape[0]):
+        #Se extrae pregunta y respuesta
         pregunta = df_correctas["Pregunta"].iloc[i]
         respuesta = df_correctas["Respuesta"].iloc[i]
-        # Paso 4: Almacenamos en el diccionario
+        #Almacenamos en el diccionario
         clave_respuestas[pregunta] = respuesta
-
-    # 4. Calcular puntuación de cada estudiamte
-    df_estudiantes["Puntuación"] = 0 # Inicializa la columna de puntuación
-    for p in preguntas: # Recorre cada pregunta
-        respuesta_correcta = clave_respuestas[p] # Obtiene la respuesta correcta
-        # Compara respuestas y suma 1 punto por cada acierto:
+    #Se inicializa la columna de puntuacion
+    df_estudiantes["Puntuación"] = 0 
+    #Se calcula la puntuacion de cada estudiante
+    for p in preguntas:
+        #Se obtiene la respuesta correcta
+        respuesta_correcta = clave_respuestas[p] 
+        #Se comparan respuestas y suma 1 punto por cada acierto
         df_estudiantes["Puntuación"] = df_estudiantes["Puntuación"].add(
             (df_estudiantes[p] == respuesta_correcta).astype(int)
         )
-
-    # 5. Mostrar detalle completo de respuestas
-    df_detalle = df_estudiantes.copy() # Copia el DataFrame original
-
+    #Se copia el DataFrame original
+    df_detalle = df_estudiantes.copy()
+    #Se vuelve a recorrer para marcar errores
     for p in preguntas:
-        # Marca errores añadiendo X donde no coinciden:
+        #Se marcan errores añadiendo X donde no coinciden:
         df_detalle[p] = df_detalle[p].where(
             df_detalle[p] == clave_respuestas[p],
             df_detalle[p] + "X"
         )
-
-    # Ordena por puntuación (mayor a menor):
+    #Se ordena por puntuación (mayor a menor):
     df_detalle = df_detalle.sort_values("Puntuación", ascending = False)
     print("Leyenda: Respuesta X = Incorrecta")
-    print(df_detalle.to_string(index = False)) # Muestra sin índices
-
-    # 6. Mostrar resultados resumidos
+    print(df_detalle.to_string(index = False))
+    #Se muestran resultados resumidos
     print("\n=== RESULTADOS DE LOS ESTUDIANTES ===")
     print(df_estudiantes[["Nombre", "Puntuación"]].sort_values("Puntuación", ascending = False).to_string(index = False))
+    return df_estudiantes
 
+def casos(mensaje_entrada: str, metodo, export: bool = False):
+    #Se inicializa entrada vacía
+    entrada = ""
+    #Bucle para mantener ciclado el proceso hasta que la extensión de la ruta sea válida
+    while(not extraer_extension(entrada)):
+        #Se muestra un mensaje y se genera una entrada de datos por consola
+        entrada = input(f"\n{mensaje_entrada}\n")
+        #Se generan casos según la extensión del archivo
+        match(extraer_extension(entrada)):
+            case "xlsx":
+                #Caso para formato EXCEL
+                return manejar_archivo(entrada, (metodo.read_excel if not export else metodo.to_excel), export)
+            case "xml":
+                #Caso para formato XML
+                return manejar_archivo(entrada, (metodo.read_xml if not export else metodo.to_xml), export)
+            case "csv":
+                #Caso para formato CSV
+                return manejar_archivo(entrada, (metodo.read_csv if not export else metodo.to_csv), export)
+            case default:
+                #Se muestra un mensaje de error y se reinicia la entrada
+                print("\nFormato de ruta incompleto (la ruta debe comenzar con la raíz './' seguido de las carpetas que contienen el archivo asi"\
+                      " como el nombre del archivo '.' extensión). \nSe admiten archivos csv, xlsx y xml. Intentelo nuevamente.\n\n")
+                entrada = ""
 
+def inicio():
+    #Se pide el archivo de preguntas y respuestas correctas
+    df_correctas = casos("Para comenzar ingrese la ruta del archivo que desea usar para la evaluación (el nombre del archivo debe contener la extención):", pd, False)
+    #Se pude el archivo de respuestas de los alumnos
+    df_estudiantes = casos("Ingrese la ruta del archivo que desea usar para evaluar (el nombre del archivo debe contener la extención):", pd, False)
+    #Se califica y muestran resultados
+    resultado = calificar_examenes(df_correctas, df_estudiantes)
+    #Se inicializa una entrada vacia
+    entrada = ""
+    #Bucle para preguntar si se desea exportar o no archivo
+    while (entrada not in ["s", "S", "n", "N"]):
+        #Se muestra mensaje y se pide respuesta por teclado
+        entrada = input("\n¿Desea exportar los datos? Teclee: \n[S]: Para exportar archivo \n[N]: Para salir sin exportar\n\n")
+    #Se valida si la respuesta es afirmativa
+    if entrada in "sS":
+        #Se pide la ruta de exportacion, si se completa se manda mensaje de salida
+        if casos("Ingrese la ruta con el archivo que desea exportar (el nombre del archivo debe contener la extención):", resultado, True) == None:
+            #Se muestra mensaje de operacion finalziada
+            print("\nSe exportó el archivo exitosamente")
+        else:
+            #Se muestra mensaje de export fallido
+            print("\nOcurrio un error, vuelva a intentarlo")
+    else: 
+        #Respuesta negativa
+        print("\nNo se exportó ningún archivo")
 
-# 1. Carga los archivos
-#df_estudiantes = pd.read_csv("./respuestas_estudiantes.csv")
-#df_correctas = pd.read_excel("./respuestas_correctas.xlsx")
-#df_correctas.to_xml("./correctas.xml", index=False, parser="etree")
-#df_correctas = manejar_archivo("./respuestas_correctas.xlsx", pd.read_excel)
-#print(df_correctas)
-#print(manejar_archivo("./respuesta22.xlsx", df_correctas.to_excel, True))
-
-
-print("\nPara comenzar ingrese la ruta del archivo que desea usar para la evaluación (el nombre del archivo debe contener la extención):\n")
-#IMPUT
-entrada = "./respuestas_correctas.xlsx"
-match(extraer_extension(entrada)):
-    case "xlsx":
-        df_correctas = manejar_archivo(entrada, pd.read_excel)
-    case "xml":
-        df_correctas = manejar_archivo(entrada, pd.read_xml)
-    case "csv":
-        df_correctas = manejar_archivo(entrada, pd.read_csv)
-    case default:
-        print("\nFormato de ruta incompleto (la ruta debe comenzar con la raíz './' seguido de las carpetas que contienen el archivo asi"\
-              " como el nombre del archivo '.' extensión). \nSe admiten archivos csv, xlsx y xml. Intentelo nuevamente.\n\n")
-        
-#CALIFICA
-#OUTPUT
-while (entrada not in ["xlsx", "csv", "xml", "n"]):
-    print("\n¿Desea exportar los datos? Teclee: \n[XLSX]: Exportar en formato xlsx\n[CSV]: Exportar en formato csv\n"\
-          "[XML]: Exportar en formato xml\n [N]: Salir sin exportar\n\n")
-    entrada = "csv"
-if entrada != "n":
-    while ("\\" in entrada or "." in entrada):
-        print("\nIngrese el nombre de su archivo")
-        entrada = "./respuestas_correctas.xlsx"
-match(entrada):
-    case "xlsx":
-        manejar_archivo(entrada, df_correctas.to_excel, True)
-    case "xml":
-        manejar_archivo(entrada, df_correctas.to_xml, True)
-    case "csv":
-        manejar_archivo(entrada, df_correctas.to_csv, True)
-    case "no":
-        print("No se ha guardado ningún archivo")
-    case default:
-        print(f"\n[{entrada}] NO se considera como un formato válido. \nSe admiten archivos csv, xlsx y xml. Intentelo nuevamente.\n\n")
+#Se ejecuta el algoritmo principal (main)
+inicio()
