@@ -3,12 +3,38 @@
 import pandas as pd
 
 def extraer_extension(ruta: str):
+    """
+    Funcion que toma una ruta en forma de cadena de texto y extrae la extension del archivo. Solo se permiten ["xlsx", "xml", "csv"] como extension.
+
+    Parameters:
+        ruta (String): Representa una ruta de un archivo de formato ["./<ruta>/<archivo>.<extension>].
+    
+    Returns:
+        (String): La extension del archivo contenido en la ruta [<extension>].
+        (Boolean == False): Si no cumple la validacion de la ruta
+    
+    Exceptions:
+        (FileNotFoundError): Archivo no existe.
+    """
     #Se segmenta la entrada segun puntos
     partes = ruta.split(".")
     #Se regresa la extension si la ruta tiene el formato de ruta y si es uno de los formatos permitidos, False si no
     return partes[2] if (len(partes) == 3 and partes[2] in ["xlsx", "xml", "csv"]) else False
 
 def manejar_archivo(ruta: str, metodo, export: bool = False):
+    """
+    Funcion que recibe una ruta de archivo, un metodo y una bandera. Aplica el método si la extensión 
+
+    Parameters:
+        ruta (String): Representa una ruta de un archivo de formato ["./<ruta>/<archivo>.<extension>].
+    
+    Returns:
+        (String): La extension del archivo contenido en la ruta [<extension>].
+        (Boolean == False): Si no cumple la validacion de la ruta
+    
+    Exceptions:
+        (FileNotFoundError): Archivo no existe.
+    """
     #Se extre la extension de la ruta
     extension = extraer_extension(ruta)
     #Se entrega falso si la extension no es valida o la ruta
