@@ -59,17 +59,11 @@ def calificar_examenes(df_correctas, df_estudiantes):
     en la pantalla, ademas de entregar el df_estudiantes extendido con las calificaciones resultado de la evaluacion.
 
     Parameters:
-        ruta (String): Representa una ruta de un archivo de formato ["./<ruta>/<archivo>.<extension>].
-        metodo (Function): Representa un metodo que se aplica segun el modo y ruta de extension.
-        export (Boolean): Representa una bandera de exportacion, si (export == False) la funcion esta en modo importar; 
-            si (export == True) la funcion esta en modo exportar archivo
+        df_correctas (DataFrame): Representa un conjunto de datos vinculados a una plantilla de examen correcto.
+        df_estudiantes (DataFrame): Representa un conjunto de datos vinculados a las respuestas de un examen por alumno.
     
     Returns:
-        (Any): La respuesta del metodo llamado segun lso casos validados.
-        (Boolean == False): Si no cumple la validacion de la ruta y extension.
-    
-    Exceptions:
-        (FileNotFoundError): Archivo y/o ruta no existe.
+        df_estudiantes (DataFrame): El conjunto de preguntas df_estudiantes aumentado con las calificaciones.
     """
     #Obtenemos las preguntas usando metodos
     preguntas = df_correctas["Pregunta"].values
@@ -111,6 +105,22 @@ def calificar_examenes(df_correctas, df_estudiantes):
     return df_estudiantes
 
 def casos(mensaje_entrada: str, metodo, export: bool = False):
+    """
+    Funcion que muestra un mensaje de entrada, un metodo y una bandera. Se emplea el metodo en modo importar archivo (export == False) 
+    o exportar archivo (export == True), aplicando su metodo correspondiente. Se trata de una extension del metodo manejar_archivo.
+
+    Parameters:
+        mensaje_entrada (String): Representa un mensaje de entrada para mostrar previo a la entrada de datos.
+        metodo (Function): Representa un metodo que se aplica segun el modo y extension.
+        export (Boolean): Representa una bandera de exportacion, si (export == False) la funcion esta en modo importar; 
+            si (export == True) la funcion esta en modo exportar archivo
+    
+    Returns:
+        (Any): La respuesta del metodo llamado segun lso casos validados.
+    
+    Exceptions:
+        (FileNotFoundError): Archivo y/o ruta no existe.
+    """
     #Se inicializa entrada vacía
     entrada = ""
     #Bucle para mantener ciclado el proceso hasta que la extensión de la ruta sea válida
@@ -135,6 +145,15 @@ def casos(mensaje_entrada: str, metodo, export: bool = False):
                 entrada = ""
 
 def inicio():
+    """
+    Funcion que inicializa el sistema (Funcion de arranque o composicion).
+
+    Parameters:
+        (None): No recibe ningun parametro
+    
+    Returns:
+        (None): No devuelve ningun valor
+    """
     #Se pide el archivo de preguntas y respuestas correctas
     df_correctas = casos("Para comenzar ingrese la ruta del archivo que desea usar para la evaluación (el nombre del archivo debe contener la extención):", pd, False)
     #Se pude el archivo de respuestas de los alumnos
