@@ -16,6 +16,7 @@ class Calculadora:
         self._historial = []
     
     """---------setter and getter---------"""
+    
     @property
     def numero1(self):
         return self._numero1
@@ -95,6 +96,10 @@ def es_flotante(num: str):
     bandera = False
     #Se agrega contador de puntos decimales
     contador = 0
+    #Se agrega contador de guiones
+    guion = -1
+    if (num[0] == "-"):
+        guion += 1
     #Ciclo de validación de digitos y contador de puntos decimales
     for x in num:
         #Se valida dígito y un unico punto decimal
@@ -103,11 +108,15 @@ def es_flotante(num: str):
         elif x == "." and contador < 1:
             #Se cuentan puntos
             contador += 1
+        elif x == "-" and guion < 1:
+            #Se cuentan guiones
+            guion += 1
         else:
             return False
     #Se valida la existencia de al menos un número
     return True if bandera else False
 
+'''
 #No jala xd    
 def interpretar_expresion(expresion):
     for operador in ["+", "-", "*", "/"]:
@@ -120,7 +129,38 @@ def interpretar_expresion(expresion):
                     return num1, num2, operador
                 else: 
                     return False
-                
+'''
+                    
+def interpretar_expresion(expresion):
+    for operador in ["*", "/", "+"]:
+        if operador in expresion:
+            partes = expresion.split(operador)
+            if len(partes) == 2:
+                if (es_flotante(partes[0].strip()) and es_flotante(partes[1].strip())):
+                    num1 = float(partes[0].strip())
+                    num2 = float(partes[1].strip())
+                    return num1, num2, operador
+                else: 
+                    return False
+    if "-" in expresion and expresion.count("-") <= 2:
+        partes = expresion.split("-")
+        if len(partes) == 2:
+                if (es_flotante(partes[0].strip()) and es_flotante(partes[1].strip())):
+                    num1 = float(partes[0].strip())
+                    num2 = float(partes[1].strip())
+                    return num1, num2, "-"
+                else: 
+                    return False
+        elif len(partes) == 3:
+            if (es_flotante(partes[1].strip()) and es_flotante(partes[2].strip())):
+                num1 = -1*float(partes[1].strip())
+                num2 = float(partes[2].strip())
+                return num1, num2, "-"
+            else: 
+                return False
+    else:
+        return False
+
 def main():
     calc = Calculadora()
     print("Calculadora Básica. Escribe 'salir' para terminar o 'historial para ver operaciones.\n")
