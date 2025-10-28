@@ -179,13 +179,14 @@ def main():
         num1, num2, operador = resultado
         calc.numero1 = num1
         calc.numero2 = num2
-        if operador == "+":
-            print("Resultado:", calc.sumar())
-        elif operador == "-":
-            print("Resultado:", calc.restar())
-        elif operador == "*":
-            print("Resultado:", calc.multiplicar())
-        elif operador == "/":
-            print("Resultado:", calc.dividir())
+        match (operador):
+            case "+":
+                print("Resultado:", calc.sumar())
+            case "-":
+                print("Resultado:", calc.restar())
+            case "*":
+                print("Resultado:", calc.multiplicar())
+            case "/":
+                print("No se puede dividir por cero.") if calc.numero2 == float(0) else print("Resultado:", calc.dividir())
 
 main()
