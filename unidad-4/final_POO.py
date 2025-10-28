@@ -45,7 +45,7 @@ def main():
     calc = CalculadoraDos()
     print("Calculadora Básica. Escribe 'salir' para terminar o 'historial para ver operaciones.\n")
     while True:
-        entrada = input("Ingresa la operacion (ejemplo 5 + 5): ")
+        entrada = input("Ingresa la operacion (ejemplo 5 + 5): ").replace(" ","")
         if entrada.strip().lower() == "salir":
             print("¡Hasta pronto!")
             break
