@@ -30,7 +30,7 @@ class Cajero:
         self.__billetes_100 = billetes_100
         self.__billetes_50 = billetes_50
     
-    #Método privado para la obtención del monto máximo
+    #Metodo privado para la obtencion del monto maximo
     def __monto_maximo(self):
         """
         Metodo que calcula el monto maximo disponible en el cajero
@@ -44,7 +44,7 @@ class Cajero:
         #Calcula y regresa el monto maximo
         return self.__billetes_1000*1000 + self.__billetes_500*500 + self.__billetes_200*200 + self.__billetes_100*100 + self.__billetes_50*50
 
-    #Método publico para retiro de efectivo del cajero
+    #Metodo publico para retiro de efectivo del cajero
     def retirar(self, monto: int):
         """
         Metodo que ejecuta el retiro de efectivo del cajero.
@@ -109,7 +109,7 @@ class Cajero:
                 entregar_50 = monto_restante // 50
             # Se sustrae la mayor cantidad de billetes de 50
             monto_restante -= entregar_50 * 50
-            # Si el resto no es completo, no hay billetes para completar la operación
+            # Si el resto no es completo, no hay billetes para completar la operacion
             if monto_restante != 0:
                 # No se expende dinero (No hay billetes para completar).
                 print(f"\nNo se puede cumplir la orden.\nSe requisitó: ${monto}\nSe expende: $0")
@@ -120,7 +120,7 @@ class Cajero:
                 self.__billetes_200 -= entregar_200
                 self.__billetes_100 -= entregar_100
                 self.__billetes_50 -= entregar_50
-                # Se entregan en pantalla y se añade un resumen de la operación
+                # Se entregan en pantalla y se aniade un resumen de la operacion
                 print("\nSe requisitó: $", f"{monto}",
                       "\nSe expende: $", entregar_1000 * 1000 + entregar_500 * 500 + entregar_200 * 200 + entregar_100 * 100 + entregar_50 * 50,
                       "\nBilletes:",
@@ -133,7 +133,7 @@ class Cajero:
 
 def main():
     """
-    Función principal del sistema (Función de arranque o composición).
+    Funcion principal del sistema (Funcion de arranque o composicion).
 
     Parameters:
         (None): No recibe nada.
@@ -145,7 +145,7 @@ def main():
     cajero = Cajero()
     # Iniciamos el sistema con mensaje de bienvenida
     print("\n--- Dispensadora de Billetes ---")
-    #Ciclo para mantener el menú de arranque
+    #Ciclo para mantener el menu de arranque
     while True:
         # Solicitamos el monto requerido y se habilita el 0 como escape
         print("\nIngrese el monto a retirar (0 para salir): ")
@@ -153,20 +153,20 @@ def main():
         if entrada == "0":
             break
         flag = False
-        # Validación de entero
+        # Validacion de entero
         for x in entrada:
             # Bandera de caracter
             flag = False
-            # String con todos los dígitos
+            # String con todos los digitos
             for y in "1234567890":
-                # Si x esta es un dígito se marca
+                # Si x esta es un digito se marca
                 if x == y:
                     flag = True
                     break
             # La bandera debe ser True SIEMPRE
             if not flag:
                 break
-        # Lógica de cajero
+        # Logica de cajero
         if flag:
             # Transformamos el valor dato a un tipo de dato entero y retiramos el contenido
             cajero.retirar(int(entrada))
