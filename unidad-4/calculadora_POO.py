@@ -114,22 +114,7 @@ def es_flotante(num: str):
         else:
             return False
     #Se valida la existencia de al menos un número
-    return True if bandera else False
-
-'''
-#No jala xd    
-def interpretar_expresion(expresion):
-    for operador in ["+", "-", "*", "/"]:
-        if operador in expresion:
-            partes = expresion.split(operador)
-            if len(partes) == 2:
-                if (es_flotante(partes[0].strip()) and es_flotante(partes[1].strip())):
-                    num1 = float(partes[0].strip())
-                    num2 = float(partes[1].strip())
-                    return num1, num2, operador
-                else: 
-                    return False
-'''
+    return True if bandera and (guion == 1 or guion == -1) else False
                     
 def interpretar_expresion(expresion):
     for operador in ["*", "/", "+"]:
@@ -189,4 +174,5 @@ def main():
             case "/":
                 print("No se puede dividir por cero.") if calc.numero2 == float(0) else print("Resultado:", calc.dividir())
 
-main()
+if __name__ == "__main__":
+    main()
