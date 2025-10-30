@@ -112,7 +112,7 @@ class CalculadoraDos(Calculadora):
         #Se valida la existencia de al menos un número
         return True if bandera and (guion == 1 or guion == -1) else False
 
-    def es_expresion(self, expresion: str):
+    def _es_expresion(self, expresion: str):
         if expresion[0] == "-":
             expresion = expresion[1:]
         if expresion[-1] in "+-*/^":
@@ -140,6 +140,12 @@ class CalculadoraDos(Calculadora):
             if expresion[i] == "":
                 return False
         return True
+    
+    def _operar(expresion: str, operador: str, i: int, fraccional: bool):
+        if fraccional:
+            pass
+        else:
+            pass
 
     def _obtener_lados(self, izquierda: str, derecha: str):
         primero = 0
@@ -160,7 +166,6 @@ class CalculadoraDos(Calculadora):
         else:
             print("\nExpresion actual: " + expresion)
         if "^" in expresion:
-            potencias = expresion.split("^")
             for i in range(len(expresion) - 1, -1, -1):
                 if expresion[i] == "^":
                     primero, ultimo = 0, 0
@@ -212,6 +217,18 @@ class CalculadoraDos(Calculadora):
                     print(f"El resultado de {expresion[primero :i]}-{expresion[i + 1:i + ultimo]} = {resultado}")
                     return self._leer(expresion[:primero] + f"{resultado if resultado >= 0 else resultado}" + expresion[i + ultimo:])
 
+    def calcular(self, expresion):
+        if self._es_expresion(expresion):
+            resultado = self._leer(expresion)
+            if resultado == None:
+                print("\nRESULTADO => INDEFINIDO")
+                self._registrar_operacion(expresion, "Indefinido")
+            else:
+                print(f"\nRESULTADO => {expresion} = {resultado}")
+                self._registrar_operacion(expresion, resultado)
+        else:
+            print("\nSYNTAX ERROR: Debe colocar una expresión matemática correcta.\nLas operaciones permitidas son [+, -, *, /, ^]")
+
 def main():
     calc = CalculadoraDos()
     print("Calculadora Básica. Escribe 'salir' para terminar o 'historial para ver operaciones.\n")
@@ -223,10 +240,6 @@ def main():
         if entrada.strip().lower() == "historial":
             calc.ver_historial()
             continue
-        if calc.es_expresion(entrada):
-            resultado = calc._leer(entrada)
-            print(f"\nRESULTADO => {entrada} = {resultado}") if resultado != None else print("\nRESULTADO => INDEFINIDO")
-        else:
-            print("\nSYNTAX ERROR: Debe colocar una expresión matemática correcta.")
+        calc.calcular(entrada)
 
 main()
