@@ -1,40 +1,20 @@
 from calculadora_POO import Calculadora
 
 class CalculadoraDos(Calculadora):
-    def __init__(self, numero1 = 0, numero2 = 0, numero3 = 0):
+    def __init__(self, numero1 = 0, numero2 = 0):
         super().__init__(numero1, numero2)
-        self._numero3 = numero3
-        self.__calculadora = Calculadora()
-    
-    """---------setter and getter---------"""
-    
-    @property
-    def numero3(self):
-        return self._numero3
-    
-    @numero3.setter
-    def numero3(self, nuevo_numero3):
-        if type(nuevo_numero3) in (int, float):
-            self._numero3 = nuevo_numero3
-        else:
-            raise ValueError("Debe ser un número")
-    
-    def _registrar_operacion(self, operador, resultado, operador2 = 0):
-        self._historial.append({
-            "operacion": f"{self._numero1} {operador} {self._numero2} "+ bool(operador2)*(f"{operador2} {self.numero3}"),
-            "resultado": resultado
-        })
+        self._expresion_anterior = ""
 
     def sumar(self, num1, num2):
-        self.__calculadora.numero1 = num1
-        self.__calculadora.numero2 = num2
-        resultado = self.__calculadora.sumar()
+        self._numero1 = num1
+        self._numero2 = num2
+        resultado = super().sumar()
         return resultado
     
     def restar(self, num1, num2):
-        self.__calculadora.numero1 = num1
-        self.__calculadora.numero2 = num2
-        resultado = self.__calculadora.restar()
+        self._numero1 = num1
+        self._numero2 = num2
+        resultado = super().restar()
         return resultado
     
     def multiplicar(self, num1, num2):
@@ -80,95 +60,157 @@ class CalculadoraDos(Calculadora):
         else:
             return self.dividir(1, resultado)
 
+    #Metodo para generar el registro de operaciones
+    def _registrar_operacion(self, operacion, resultado):
+        """
+        Metodo que registra una operacion efectuada en la lista historial, como lista de diccionarios con el formato de {'operacion', 'resultado'}
 
-#Función de validación de numero entero
-def es_entero(num: str):
-    """
-    Función que toma una cadena de texto y valida si se trata de un número flotante positivo.
+        Parameters:
+            operador (String): Un caracter que representa el simbolo de operacion.
+            resultado (Int/Float): El resultado numerico de la operacion generada.
+        
+        Returns:
+            (None): No retorna nada
+        """
+        #Se agrega un diccionario como registro de lista
+        self._historial.append({
+            "operacion": f"{operacion}",
+            "resultado": resultado
+        })
 
-    Parameters:
-        num (String): La cadena de texto a evaluar.
-    
-    Returns:
-        Boolean == True: Si num es un número flotante positivo.
-        Boolean == False: Si num no es un número flotante positivo.
-    """
-    #Se valida cadena vacía
-    if num == "":
-        return False
-    #Se agrega bandera de validación de caracter numérico
-    bandera = False
-    #Se agrega contador de guiones
-    guion = -1
-    if (num[0] == "-"):
-        guion += 1
-    #Ciclo de validación de digitos y contador de guiones
-    for x in num:
-        #Se valida dígito y un unico punto decimal
-        if x in "1234567890":
-            bandera = True
-        elif x == "-" and guion < 1:
-            #Se cuentan guiones
-            guion += 1
-        else:
+    #Función de validación de numero entero
+    def es_entero(self, num: str):
+        """
+        Función que toma una cadena de texto y valida si se trata de un número flotante positivo.
+
+        Parameters:
+            num (String): La cadena de texto a evaluar.
+        
+        Returns:
+            Boolean == True: Si num es un número flotante positivo.
+            Boolean == False: Si num no es un número flotante positivo.
+        """
+        #Se valida cadena vacía
+        if num == "":
             return False
-    #Se valida la existencia de al menos un número
-    return True if bandera and (guion == 1 or guion == -1) else False
-
-def interpretar_expresion(expresion):
-    for operador in ["*", "/", "+", "^"]:
-        if operador in expresion:
-            partes = expresion.split(operador)
-            if len(partes) == 2:
-                if (es_entero(partes[0].strip()) and es_entero(partes[1].strip())):
-                    num1 = int(partes[0].strip())
-                    num2 = int(partes[1].strip())
-                    return num1, num2, operador
-                else: 
-                    return False
-    if "-" in expresion and expresion.count("-") <= 2:
-        partes = expresion.split("-")
-        if len(partes) == 2:
-                if (es_entero(partes[0].strip()) and es_entero(partes[1].strip())):
-                    num1 = int(partes[0].strip())
-                    num2 = int(partes[1].strip())
-                    return num1, num2, "-"
-                else: 
-                    return False
-        elif len(partes) == 3:
-            if (es_entero(partes[1].strip()) and es_entero(partes[2].strip())):
-                num1 = -1*int(partes[1].strip())
-                num2 = int(partes[2].strip())
-                return num1, num2, "-"
-            else: 
+        #Se agrega bandera de validación de caracter numérico
+        bandera = False
+        #Se agrega contador de guiones
+        guion = -1
+        if (num[0] == "-"):
+            guion += 1
+        #Ciclo de validación de digitos y contador de guiones
+        for x in num:
+            #Se valida dígito y un unico punto decimal
+            if x in "1234567890":
+                bandera = True
+            elif x == "-" and guion < 1:
+                #Se cuentan guiones
+                guion += 1
+            else:
                 return False
-    else:
-        return False
+        #Se valida la existencia de al menos un número
+        return True if bandera and (guion == 1 or guion == -1) else False
 
-def obtener_lados(izquierda: str, derecha: str):
-    primero = 0
-    ultimo = 0
-    for i in range(len(izquierda) - 1, -1, -1):
-        if es_entero(izquierda[i:]):
-            primero = i
+    def es_expresion(self, expresion: str):
+        if expresion[0] == "-":
+            expresion = expresion[1:]
+        if expresion[-1] in "+-*/^":
+            return False
+        expresion = expresion.split("^")
+        for operacion in ["*", "/", "+"]:
+            expresion = [x.split(operacion) for x in expresion]
+            y=[]
+            for x in expresion:
+                y+=[*x]
+            expresion = y
+        count = 0
+        for i in range(len(expresion)):
+            for x in expresion[i]:
+                if x == "-":
+                    count += 1
+                    if count == 2:
+                        return False
+                else:
+                    count = 0
+            if not self.es_entero(expresion[i]):
+                for x in expresion[i].split("-"):
+                    if not self.es_entero(x):
+                        return False
+            if expresion[i] == "":
+                return False
+        return True
+
+    def _obtener_lados(self, izquierda: str, derecha: str):
+        primero = 0
+        ultimo = 0
+        for i in range(len(izquierda) - 1, -1, -1):
+            if self.es_entero(izquierda[i:]):
+                primero = i
+            else:
+                break
+        for i in range(1, len(derecha)+1):
+            if self.es_entero(derecha[:i]):
+                ultimo = i
+        return primero, ultimo + 1
+
+    def _leer(self, expresion: str):
+        if self.es_entero(expresion):
+            return expresion
         else:
-            break
-    for i in range(1, len(derecha)+1):
-        if es_entero(derecha[:i]):
-            ultimo = i
-    return primero, ultimo + 1
-
-def leer(expresion: str):
-    if "^" in expresion:
-        potencias = expresion.split("^")
-        if len(potencias) > 3:
-            print("MAL")
-        for i in range(len(expresion) - 1, -1, -1):
-            if expresion[i] == "^":
-                primero, ultimo = obtener_lados(expresion[:i], expresion[i+1:])
-                print(expresion[primero :i], expresion[i + 1:i + ultimo],"\n")
-                #Potenciar
-                #Recursivo a leer
+            print("\nExpresion actual: " + expresion)
+        if "^" in expresion:
+            potencias = expresion.split("^")
+            for i in range(len(expresion) - 1, -1, -1):
+                if expresion[i] == "^":
+                    primero, ultimo = 0, 0
+                    primero, ultimo = self._obtener_lados(expresion[:i], expresion[i+1:])
+                    resultado = self.potencia(int(expresion[primero :i]), int(expresion[i + 1:i + ultimo]))
+                    if resultado[1][0] != 0:
+                        print(f"La potencia no es entera: \nEl resultado de {expresion[primero :i]}^{expresion[i + 1:i + ultimo]} =" 
+                            + bool(resultado[0])*str(resultado[0]) + f" {resultado[1][0] if resultado[1][0] < 0 else resultado[1][0]}/{resultado[1][1]}")
+                        print("Se interrumpe el proceso.\n")
+                        return (expresion[:primero] + f"{resultado[1][0] if resultado[1][0] < 0 else resultado[1][0]}/{resultado[1][1]}" + expresion[i + ultimo:])
+                    else:
+                        print(f"El resultado de {expresion[primero :i]}^{expresion[i + 1:i + ultimo]} = {resultado[0]}")
+                        return self._leer(expresion[:primero] + f"{resultado[0] if resultado[0] >= 0 else resultado[0]}" + expresion[i + ultimo:])
+        elif "*" in expresion or "/" in expresion:
+            for i in range(len(expresion)):
+                if expresion[i] == "*":
+                    primero, ultimo = 0, 0
+                    primero, ultimo = self._obtener_lados(expresion[:i], expresion[i+1:])
+                    resultado = self.multiplicar(int(expresion[primero :i]), int(expresion[i + 1:i + ultimo]))
+                    print(f"El resultado de {expresion[primero :i]}*{expresion[i + 1:i + ultimo]} = {resultado}")
+                    return self._leer(expresion[:primero] + f"{resultado if resultado >= 0 else resultado}" + expresion[i + ultimo:])
+                if expresion[i] == "/":
+                    primero, ultimo = 0, 0
+                    primero, ultimo = self._obtener_lados(expresion[:i], expresion[i+1:])
+                    resultado = self.dividir(int(expresion[primero :i]), int(expresion[i + 1:i + ultimo]))
+                    if resultado == None:
+                        print("No se puede dividir por cero.")
+                        return None
+                    if resultado[1][0] != 0:
+                        print(f"La division no es entera: \nEl resultado de {expresion[primero :i]}/{expresion[i + 1:i + ultimo]} =" 
+                            + bool(resultado[0])*str(resultado[0]) + f" {resultado[1][0] if resultado[1][0] < 0 else resultado[1][0]}/{resultado[1][1]}")
+                        print("Se interrumpe el proceso.\n")
+                        return (expresion[:primero] + f"{resultado[1][0] if resultado[1][0] < 0 else resultado[1][0]}/{resultado[1][1]}" + expresion[i + ultimo:])
+                    else:
+                        print(f"El resultado de {expresion[primero :i]}/{expresion[i + 1:i + ultimo]} = {resultado[0]}")
+                        return self._leer(expresion[:primero] + f"{resultado[0] if resultado[0] >= 0 else resultado[0]}" + expresion[i + ultimo:])
+        elif "+" in expresion or "-" in expresion:
+            for i in range(len(expresion)):
+                if expresion[i] == "+":
+                    primero, ultimo = 0, 0
+                    primero, ultimo = self._obtener_lados(expresion[:i], expresion[i+1:])
+                    resultado = self.sumar(int(expresion[primero :i]), int(expresion[i + 1:i + ultimo]))
+                    print(f"El resultado de {expresion[primero :i]}+{expresion[i + 1:i + ultimo]} = {resultado}")
+                    return self._leer(expresion[:primero] + f"{resultado if resultado >= 0 else resultado}" + expresion[i + ultimo:])
+                if expresion[i] == "-" and i != 0:
+                    primero, ultimo = 0, 0
+                    primero, ultimo = self._obtener_lados(expresion[:i], expresion[i+1:])
+                    resultado = self.restar(int(expresion[primero :i]), int(expresion[i + 1:i + ultimo]))
+                    print(f"El resultado de {expresion[primero :i]}-{expresion[i + 1:i + ultimo]} = {resultado}")
+                    return self._leer(expresion[:primero] + f"{resultado if resultado >= 0 else resultado}" + expresion[i + ultimo:])
 
 def main():
     calc = CalculadoraDos()
@@ -181,23 +223,10 @@ def main():
         if entrada.strip().lower() == "historial":
             calc.ver_historial()
             continue
-        leer("5112^-3783^-454")
-        '''
-        resultado = interpretar_expresion(entrada)
-        if not resultado:
-            print("Expresión no válida. Usa el formato: número operador número (ej. 5 + 5)\n")
-            continue
-        num1, num2, operador = resultado
-        if operador == "+":
-            print("Resultado:", calc.sumar(num1, num2))
-        elif operador == "-":
-            print("Resultado:", calc.restar(num1, num2))
-        elif operador == "*":
-            print("Resultado:", calc.multiplicar(num1, num2))
-        elif operador == "/":
-            print("Resultado:", calc.dividir(num1, num2))
-        elif operador == "^":
-            print("Resultado:", calc.potencia(num1, num2))
-            '''
+        if calc.es_expresion(entrada):
+            resultado = calc._leer(entrada)
+            print(f"\nRESULTADO => {entrada} = {resultado}") if resultado != None else print("\nRESULTADO => INDEFINIDO")
+        else:
+            print("\nSYNTAX ERROR: Debe colocar una expresión matemática correcta.")
 
 main()
