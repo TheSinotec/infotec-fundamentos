@@ -269,25 +269,35 @@ def interpretar_expresion(expresion):
         #Si la expresion no cumple con la cantidad de guiones
         return False
 
-#Se inicializa el algoritmo
-def main():
+#Funcion de arranque
+if __name__ == "__main__":
+    #Se instancia la calculadora
     calc = Calculadora()
+    #Se muestra mensaje de entrada
     print("Calculadora Básica. Escribe 'salir' para terminar o 'historial para ver operaciones.\n")
+    #Ciclo para mantener el menu de arranque
     while True:
+        #Se pide la entrada de datos
         entrada = input("Ingresa la operacion (ejemplo 5 + 5): ").replace(" ","")
+        #Se valida escape de salida
         if entrada.strip().lower() == "salir":
             print("¡Hasta pronto!")
             break
+        #Se valida funcion de historial
         if entrada.strip().lower() == "historial":
             calc.ver_historial()
             continue
+        #Se valida entrada como expresion valida
         resultado = interpretar_expresion(entrada)
+        #En caso de no ser una expresion se manda mensaje y se continua
         if not resultado:
             print("Expresión no válida. Usa el formato: número operador número (ej. 5 + 5)\n")
             continue
+        #Se inicializan variables con el resultado
         num1, num2, operador = resultado
-        calc.numero1 = num1
-        calc.numero2 = num2
+        #Se entregan variables de calculadora
+        calc.numero1, calc.numero2 = num1, num2
+        #Se opera segun operador y se genera la suma 
         match (operador):
             case "+":
                 print("Resultado:", calc.sumar())
@@ -296,7 +306,5 @@ def main():
             case "*":
                 print("Resultado:", calc.multiplicar())
             case "/":
+                #Se valida la division por cero.
                 print("No se puede dividir por cero.") if calc.numero2 == float(0) else print("Resultado:", calc.dividir())
-
-if __name__ == "__main__":
-    main()
