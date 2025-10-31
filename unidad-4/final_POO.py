@@ -17,14 +17,14 @@ class CalculadoraDos(Calculadora):
         dividir(): Realiza la divicion entre numero1 y numero2, retorna el resultado y genera historial.
         potencia(): Realiza la divicion entre numero1 y numero2, retorna el resultado y genera historial.
         ver_historial(): Muestra el historial de operaciones acumulado.
-        es_entero():
-        es_expresion():
-        operar():
-        obtener_lados():
-        leer():
-        calcular():
+        es_entero(num): Verifica que una entrada de texto sea un número entero
+        es_expresion(expresion): Verifica que una entrada de texto sea una expresion matematica correcta.
+        operar(expresion, operador, i): Opera sobre una seccion de una expresion matematica correcta.
+        obtener_lados(izquierda, derecha): Obtiene los los indices asociados a los extremos de un operador a partir de optener los numeros aledaños.
+        leer(expresion): Parte de una expresion para calcular todas las operaciones asociadas segun la jerarquia de operaciones.
+        calcular(expresion): Genera la validacion y/o calculo de una entrada de texto.
     """
-
+    #Se inicializa el constructor de la clase
     def __init__(self, numero1 = 0, numero2 = 0):
         """
         Parameters:
@@ -35,6 +35,7 @@ class CalculadoraDos(Calculadora):
         #Se inicializa el constructor de la clase padre
         super().__init__(numero1, numero2)
 
+    #Metodo para genera la suma de dos numeros dados
     def sumar(self, num1, num2):
         """
         Metodo que genera la suma de dos numeros.
@@ -55,6 +56,7 @@ class CalculadoraDos(Calculadora):
         #Se regresa resultado
         return resultado
     
+    #Metodo para genera la resta de dos numeros dados  
     def restar(self, num1, num2):
         """
         Metodo que genera la resta de dos numeros.
@@ -75,6 +77,7 @@ class CalculadoraDos(Calculadora):
         #Se regresa resultado
         return resultado
     
+    #Metodo para genera la multiplicacion de dos numeros dados
     def multiplicar(self, num1, num2):
         """
         Metodo que genera la multiplicacion de dos numeros.
@@ -99,7 +102,8 @@ class CalculadoraDos(Calculadora):
         else:
             #Se regresa resultado negativo
             return -resultado
-    
+        
+    #Metodo para genera la division de dos numeros dados
     def dividir(self, num1, num2):
         """
         Metodo que genera la division de dos numeros.
@@ -139,7 +143,8 @@ class CalculadoraDos(Calculadora):
         else:
             #Si la operacion es de numeros negativos se mandan los signos
             return -resultado, (-resto, num2)
-
+    
+    #Metodo para genera la potencia de dos numeros dados
     def potencia(self, num1, num2):
         """
         Metodo que genera la potencia de dos numeros.
@@ -174,7 +179,7 @@ class CalculadoraDos(Calculadora):
         else:
             #Se retorna la exponenciacion negativa como una division
             return self.dividir(1, resultado)
-
+        
     #Metodo para generar el registro de operaciones
     def _registrar_operacion(self, operacion, resultado):
         """
@@ -193,7 +198,7 @@ class CalculadoraDos(Calculadora):
             "resultado": resultado
         })
 
-    #Función de validación de numero entero
+    #Metodo de validación de numero entero
     def es_entero(self, num: str):
         """
         Función que toma una cadena de texto y valida si se trata de un número flotante positivo.
@@ -226,7 +231,8 @@ class CalculadoraDos(Calculadora):
                 return False
         #Se valida la existencia de al menos un número
         return True if bandera and (guion == 1 or guion == -1) else False
-
+    
+    #Metodo validar una expresion matematica correcta
     def _es_expresion(self, expresion: str):
         """
         Metodo que verifica si una expresion es matematicamente correcta
@@ -238,6 +244,9 @@ class CalculadoraDos(Calculadora):
             Boolean == True: Si la expresion es valida
             Boolean == False: Si la expresion no es valida
         """
+        #Se valida entradas vacías
+        if expresion == "":
+            return False
         #Se elimina el primer signo negativo
         if expresion[0] == "-":
             expresion = expresion[1:]
@@ -287,6 +296,7 @@ class CalculadoraDos(Calculadora):
         #Se mantiene la integridad de la expresion
         return True
     
+    #Metodo realizar una operacion dada una expresion, un operador y un indice
     def _operar(self, expresion: str, operador: str, i: int):
         """
         Metodo que realiza una operacion puntual entre dos numeros
@@ -343,8 +353,8 @@ class CalculadoraDos(Calculadora):
                 print(f"El resultado de {expresion[primero :i]}{operador}{expresion[i + 1:i + ultimo]} = {resultado[0]}")
                 #Se regresa la expresión nueva de la operacion realizada
                 return expresion[:primero] + f"{resultado[0] if resultado[0] >= 0 else resultado[0]}" + expresion[i + ultimo:]
-                    
-
+            
+    #Metodo para obtener los numeros adyacentes        
     def _obtener_lados(self, izquierda: str, derecha: str):
         """
         Metodo que obtiene los numeros por la izquierda y la derecha de un par de cadenas, respectivamente.
@@ -376,7 +386,8 @@ class CalculadoraDos(Calculadora):
                 #Se registra el indice si es un entero valido
         #Se regresan ambos indices y se ajusta el derecho por desface de range
         return primero, ultimo + 1
-
+    
+    #Metodo para procesar una expresion matematica y aplicar las operaciones
     def _leer(self, expresion: str):
         """
         Metodo que realiza recursivamente las operaciones de una expresion matematica.
@@ -439,7 +450,8 @@ class CalculadoraDos(Calculadora):
                     operacion = self._operar(expresion, "-", i)
                     #Se llama recursivamente la funcion
                     return self._leer(operacion)
-
+                
+    #Metodo para realizar un calculo segun una entrada de texto
     def calcular(self, expresion):
         """
         Metodo que realiza el calculo y validacion de una entrada de texto.
